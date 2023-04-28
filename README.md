@@ -27,23 +27,10 @@ Okhttp 3.x Metrics For Prometheus
 ###okhttp3基本配置：
 ################################################################################################################
 okhttp3:
-  # 连接超时时间，默认 10s
-  connect-timeout: 5s
-  # 读取超时时间，默认 10s
-  read-timeout: 30s
-  # 写入超时时间，默认 10s
-  write-timeout: 30s
-  # 连接失败后是否重试
-  retry-on-connection-failure: false
-  # 打印日志级别：NONE、BASIC、HEADERS、BODY
-  log-level: HEADERS
-  pool:
-    # 最大空闲连接梳数量，超出该值后，连接用完后会被关闭，最多只会保留idleConnectionCount个连接数量
-    max-idle-connections: 48
-    # 最大瞬时处理连接数量
-    max-requests: 128
-    # 每个请求地址最大瞬时处理连接数量
-    max-requests-per-host: 24
+  # okhttp3 的 metrics 配置
+  metrics:
+    # 是否在监控指标中包含host标签
+    include-host: true
 ```
 
 
