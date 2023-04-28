@@ -29,31 +29,35 @@ public class OkHttpCacheMetrics extends OkHttp3Metrics {
 	/**
 	 * http cache
 	 */
-	public static final String METRIC_NAME_CACHE_REQUEST_COUNT 		= OKHTTP3_METRIC_NAME_PREFIX + ".cache.request.count";
-	public static final String METRIC_NAME_CACHE_HIT_COUNT 		= OKHTTP3_METRIC_NAME_PREFIX + ".cache.hit.count";
-	public static final String METRIC_NAME_CACHE_NETWORK_COUNT 		= OKHTTP3_METRIC_NAME_PREFIX + ".cache.network.count";
-	public static final String METRIC_NAME_CACHE_WRITE_SUCCESS_COUNT 		= OKHTTP3_METRIC_NAME_PREFIX + ".cache.write.success.count";
-	public static final String METRIC_NAME_CACHE_WRITE_ABORT_COUNT 		= OKHTTP3_METRIC_NAME_PREFIX + ".cache.write.abort.count";
-	public static final String METRIC_NAME_CACHE_CURRENT_SIZE 	= OKHTTP3_METRIC_NAME_PREFIX + ".cache.current.size";
-	public static final String METRIC_NAME_CACHE_MAX_SIZE 	= OKHTTP3_METRIC_NAME_PREFIX + ".cache.max.size";
+	public static final String METRIC_NAME_CACHE_REQUEST_COUNT 			= ".cache.request.count";
+	public static final String METRIC_NAME_CACHE_HIT_COUNT 				= ".cache.hit.count";
+	public static final String METRIC_NAME_CACHE_NETWORK_COUNT 			=  ".cache.network.count";
+	public static final String METRIC_NAME_CACHE_WRITE_SUCCESS_COUNT 	=  ".cache.write.success.count";
+	public static final String METRIC_NAME_CACHE_WRITE_ABORT_COUNT		=  ".cache.write.abort.count";
+	public static final String METRIC_NAME_CACHE_CURRENT_SIZE 			=  ".cache.current.size";
+	public static final String METRIC_NAME_CACHE_MAX_SIZE 				=  ".cache.max.size";
 
 	public OkHttpCacheMetrics(OkHttpClient okhttp3Client) {
-		super(okhttp3Client);
+		super(okhttp3Client, OkHttp3Metrics.OKHTTP3_POOL_METRIC_NAME_PREFIX);
 	}
 
-	public OkHttpCacheMetrics(OkHttpClient okhttp3Client, Iterable<Tag> tags) {
-		super(okhttp3Client, tags);
+	public OkHttpCacheMetrics(OkHttpClient okhttp3Client, String namePrefix) {
+		super(okhttp3Client, namePrefix);
+	}
+
+	public OkHttpCacheMetrics(OkHttpClient okhttp3Client, String namePrefix, Iterable<Tag> tags) {
+		super(okhttp3Client, namePrefix, tags);
 	}
 
 	@Override
-	public void bindTo(MeterRegistry registry, OkHttpClient okhttp3Client, Iterable<Tag> tags) {
+	public void bindTo(MeterRegistry registry, OkHttpClient okhttp3Client, String namePrefix, Iterable<Tag> tags) {
 		Cache cache = okhttp3Client.cache();
-		bindGauge(registry, METRIC_NAME_CACHE_REQUEST_COUNT, "Total number of cache request ", cache, Cache::requestCount);
-		bindGauge(registry, METRIC_NAME_CACHE_HIT_COUNT, "Total number of cache hit ", cache, Cache::hitCount);
-		bindGauge(registry, METRIC_NAME_CACHE_NETWORK_COUNT, "Total number of cache network ", cache, Cache::networkCount);
-		bindGauge(registry, METRIC_NAME_CACHE_WRITE_SUCCESS_COUNT, "Total number of cache write success ", cache, Cache::writeSuccessCount);
-		bindGauge(registry, METRIC_NAME_CACHE_WRITE_ABORT_COUNT, "Total number of cache write abort ", cache, Cache::writeAbortCount);
-		bindGauge(registry, METRIC_NAME_CACHE_CURRENT_SIZE, "Total number of current cache size ", cache, (c) -> {
+		bindGauge(registry, namePrefix  + METRIC_NAME_CACHE_REQUEST_COUNT, "Total number of cache request ", cache, Cache::requestCount);
+		bindGauge(registry, namePrefix  + METRIC_NAME_CACHE_HIT_COUNT, "Total number of cache hit ", cache, Cache::hitCount);
+		bindGauge(registry, namePrefix  + METRIC_NAME_CACHE_NETWORK_COUNT, "Total number of cache network ", cache, Cache::networkCount);
+		bindGauge(registry, namePrefix  + METRIC_NAME_CACHE_WRITE_SUCCESS_COUNT, "Total number of cache write success ", cache, Cache::writeSuccessCount);
+		bindGauge(registry, namePrefix  + METRIC_NAME_CACHE_WRITE_ABORT_COUNT, "Total number of cache write abort ", cache, Cache::writeAbortCount);
+		bindGauge(registry, namePrefix  + METRIC_NAME_CACHE_CURRENT_SIZE, "Total number of current cache size ", cache, (c) -> {
 			try {
 				return c.size();
 			} catch (IOException e) {

@@ -43,11 +43,11 @@ public class OkHttp3MetricsApplicationTests implements CommandLineRunner {
         System.err.println("Spring Boot Application（OkHttp3-Metrics-Application） Started !");
 
         String url = "https://baidu.com";
-        for (int i = 0; i < 100; i++) {
+        for (int i = 0; i < 1000; i++) {
             Request request = new Request.Builder().url(url).build();
             Response response = okHttpClient.newCall(request).execute();
             System.out.println(response.body().string());
-            Thread.sleep(100);
+            Thread.sleep(10);
         }
 
     }

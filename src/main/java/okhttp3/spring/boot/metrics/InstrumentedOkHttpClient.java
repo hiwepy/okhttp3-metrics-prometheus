@@ -102,7 +102,7 @@ final class InstrumentedOkHttpClient extends OkHttpClient {
 
   private void instrumentEventListener() {
 
-    OkHttpMetricsEventListener metricsEventListener = OkHttpMetricsEventListener.builder(registry, OkHttp3Metrics.OKHTTP3_EVENT_METRIC_NAME_PREFIX)
+    OkHttpMetricsEventListener metricsEventListener = OkHttpMetricsEventListener.builder(registry, OkHttp3Metrics.OKHTTP3_REQUEST_METRIC_NAME_PREFIX)
             .tags(extraTags)
             .requestTagKeys(requestTagKeys)
             .includeHostTag(includeHostTag)

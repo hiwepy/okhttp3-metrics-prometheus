@@ -28,18 +28,8 @@ management:
 okhttp3:
   # okhttp3 的 metrics 配置
   metrics:
-    # 是否开启okhttp3的metrics监控
-    enabled: true
-    # 扩展 okhttp3 的 metrics 指标标签
-    extra-tags:
-      # 额外的tag，可以在metrics中查看
-      app: ${spring.application.name}
     # 是否在监控指标中包含host标签
     include-host: true
-    # 扩展 okhttp3 request 的 metrics 指标标签
-    request-tag-keys:
-      # 额外的tag，可以在metrics中查看
-      app: ${spring.application.name}
 
 spring:
   application:

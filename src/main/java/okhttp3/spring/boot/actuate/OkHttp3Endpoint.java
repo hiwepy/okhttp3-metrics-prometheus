@@ -15,6 +15,7 @@
  */
 package okhttp3.spring.boot.actuate;
 
+import io.micrometer.core.instrument.DistributionSummary;
 import io.micrometer.core.instrument.Gauge;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Timer;
@@ -67,11 +68,11 @@ public class OkHttp3Endpoint {
             metrics.putAll(convertTimerToMap(entry.getKey(), entry.getValue()));
         }
         // timer
-        Map<String, Timer> timers = registry.getMeters().stream().filter(meter -> meter.getId().getName()
-                .startsWith(OkHttp3Metrics.OKHTTP3_METRIC_NAME_PREFIX) && meter.getId().getType().equals(Timer.class)
-        ).map(meter -> (Timer) meter).collect(Collectors.toMap(meter -> meter.getId().getName(), meter -> meter));
-        for (Map.Entry<String, Timer> entry : timers.entrySet()) {
-            metrics.putAll(convertTimerToMap(entry.getKey(), entry.getValue()));
+        Map<String, DistributionSummary> summarys = registry.getMeters().stream().filter(meter -> meter.getId().getName()
+                .startsWith(OkHttp3Metrics.OKHTTP3_METRIC_NAME_PREFIX) && meter.getId().getType().equals(DistributionSummary.class)
+        ).map(meter -> (DistributionSummary) meter).collect(Collectors.toMap(meter -> meter.getId().getName(), meter -> meter));
+        for (Map.Entry<String, DistributionSummary> entry : summarys.entrySet()) {
+            metrics.putAll(convertSummaryToMap(entry.getKey(), entry.getValue()));
         }
         return metrics;
     }
@@ -82,6 +83,7 @@ public class OkHttp3Endpoint {
             map.put(name + measure.getStatistic().name(), measure.getValue());
         });
         map.put(name + ".meanRate", timer.mean(TimeUnit.SECONDS));
+        map.put(name + ".maxRate", timer.max(TimeUnit.SECONDS));
         HistogramSnapshot snapshot = timer.takeSnapshot();
         map.put(name + ".snapshot.mean", snapshot.mean());
         map.put(name + ".snapshot.max", snapshot.max());
@@ -100,7 +102,31 @@ public class OkHttp3Endpoint {
         });
         return map;
     }
-	
+
+    public Map<String, Object> convertSummaryToMap(String name, DistributionSummary summary) {
+        Map<String, Object> map = new HashMap<>();
+        summary.measure().forEach(measure -> {
+            map.put(name + measure.getStatistic().name(), measure.getValue());
+        });
+        map.put(name + ".meanRate", summary.mean());
+        HistogramSnapshot snapshot = summary.takeSnapshot();
+        map.put(name + ".snapshot.mean", snapshot.mean());
+        map.put(name + ".snapshot.max", snapshot.max());
+        Arrays.stream(snapshot.percentileValues()).forEach(percentile -> {
+            map.put(name + ".snapshot." + percentile.percentile() * 100 + "thPercentile", percentile.value());
+        });
+        /*
+        map.put(name + ".snapshot.75thPercentile", snapshot.get75thPercentile());
+        map.put(name + ".snapshot.95thPercentile", snapshot.get95thPercentile());
+        map.put(name + ".snapshot.98thPercentile", snapshot.get98thPercentile());
+        map.put(name + ".snapshot.99thPercentile", snapshot.get99thPercentile());
+        map.put(name + ".snapshot.999thPercentile", snapshot.get999thPercentile());
+        */
+        Arrays.stream(snapshot.histogramCounts()).forEach(count -> {
+            map.put(name + ".snapshot.bucket." + count.bucket(), count.count());
+        });
+        return map;
+    }
 	
 
 	 

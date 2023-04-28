@@ -41,10 +41,6 @@ public abstract class OkHttp3Metrics implements MeterBinder, ApplicationListener
 	 */
 	public static final String OKHTTP3_METRIC_NAME_PREFIX = "okhttp3";
 	/**
-	 * Prefix used for all OkHttp3 Event metric names.
-	 */
-	public static final String OKHTTP3_EVENT_METRIC_NAME_PREFIX = "okhttp3.event";
-	/**
 	 * Prefix used for all OkHttp3 Request metric names.
 	 */
 	public static final String OKHTTP3_REQUEST_METRIC_NAME_PREFIX = "okhttp3.requests";
@@ -103,23 +99,18 @@ public abstract class OkHttp3Metrics implements MeterBinder, ApplicationListener
 	public static final String METRIC_NAME_WRITE_TIMEOUT_COUNT 		= OKHTTP3_METRIC_NAME_PREFIX + ".write.timeout.count";
 	public static final String METRIC_NAME_PING_FAIL_COUNT 			= OKHTTP3_METRIC_NAME_PREFIX + ".ping.fail.count";
 
-	/**
-	 * network
-	 */
-	public static final String METRIC_NAME_NETWORK_REQUESTS_SUBMITTED 			= OKHTTP3_METRIC_NAME_PREFIX + ".network.requests.submitted";
-	public static final String METRIC_NAME_NETWORK_REQUESTS_RUNNING 			= OKHTTP3_METRIC_NAME_PREFIX + ".network.requests.running";
-	public static final String METRIC_NAME_NETWORK_REQUESTS_COMPLETED 			= OKHTTP3_METRIC_NAME_PREFIX + ".network.requests.completed";
-	public static final String METRIC_NAME_NETWORK_REQUESTS_DURATION 			= OKHTTP3_METRIC_NAME_PREFIX + ".network.requests.duration";
 
 	private OkHttpClient okhttp3Client;
+	private String namePrefix;
 	private Iterable<Tag> tags;
 
-	public OkHttp3Metrics(OkHttpClient okhttp3Client) {
-		this(okhttp3Client, Collections.emptyList());
+	public OkHttp3Metrics(OkHttpClient okhttp3Client, String namePrefix) {
+		this(okhttp3Client, namePrefix, Collections.emptyList());
 	}
 
-	public OkHttp3Metrics(OkHttpClient okhttp3Client, Iterable<Tag> tags) {
+	public OkHttp3Metrics(OkHttpClient okhttp3Client, String namePrefix, Iterable<Tag> tags) {
 		this.okhttp3Client = okhttp3Client;
+		this.namePrefix = namePrefix;
 		this.tags = tags;
 	}
 
@@ -130,7 +121,7 @@ public abstract class OkHttp3Metrics implements MeterBinder, ApplicationListener
 
 	@Override
 	public void bindTo(MeterRegistry registry) {
-		bindTo(registry, okhttp3Client, tags);
+		bindTo(registry, okhttp3Client, namePrefix, tags);
 	}
 
 	/**
@@ -139,7 +130,7 @@ public abstract class OkHttp3Metrics implements MeterBinder, ApplicationListener
 	 * @param okhttp3Client
 	 * @param tags
 	 */
-	abstract void bindTo(@NonNull MeterRegistry registry, OkHttpClient okhttp3Client, Iterable<Tag> tags);
+	abstract void bindTo(@NonNull MeterRegistry registry, OkHttpClient okhttp3Client, String namePrefix, Iterable<Tag> tags);
 
 	protected  <T> void bindTimer(MeterRegistry registry, String name, String desc, T metricsHandler,
 								  ToLongFunction<T> countFunc, ToDoubleFunction<T> consumer) {

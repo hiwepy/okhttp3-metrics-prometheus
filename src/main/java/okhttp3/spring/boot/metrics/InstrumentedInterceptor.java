@@ -21,7 +21,14 @@ import java.util.concurrent.TimeUnit;
 @Order(Integer.MIN_VALUE)
 public class InstrumentedInterceptor implements Interceptor {
 
-    private MeterRegistry registry;
+    /**
+     * network
+     */
+    public static final String METRIC_NAME_NETWORK_REQUESTS_SUBMITTED 			= ".network.requests.submitted";
+    public static final String METRIC_NAME_NETWORK_REQUESTS_RUNNING 			= ".network.requests.running";
+    public static final String METRIC_NAME_NETWORK_REQUESTS_COMPLETED 			= ".network.requests.completed";
+    public static final String METRIC_NAME_NETWORK_REQUESTS_DURATION 			= ".network.requests.duration";
+
     private Collection<Tag> tags;
     private final Counter submitted;
     private final Counter running;
@@ -29,15 +36,17 @@ public class InstrumentedInterceptor implements Interceptor {
     private final Timer duration;
 
     public InstrumentedInterceptor(MeterRegistry registry, Collection<Tag> tags) {
-        this.registry = registry;
+        this(registry, OkHttp3Metrics.OKHTTP3_METRIC_NAME_PREFIX, tags);
+    }
+
+    public InstrumentedInterceptor(MeterRegistry registry, String namePrefix, Collection<Tag> tags) {
         this.tags = Objects.isNull(tags) ? Collections.emptyList() : tags;
-        this.submitted = registry.counter(OkHttp3Metrics.METRIC_NAME_NETWORK_REQUESTS_SUBMITTED, this.tags);
-        this.running = registry.counter(OkHttp3Metrics.METRIC_NAME_NETWORK_REQUESTS_RUNNING, this.tags);
-        this.completed = registry.counter(OkHttp3Metrics.METRIC_NAME_NETWORK_REQUESTS_COMPLETED, this.tags);
-        this.duration = Timer.builder(OkHttp3Metrics.METRIC_NAME_NETWORK_REQUESTS_DURATION)
+        this.submitted = registry.counter(namePrefix + METRIC_NAME_NETWORK_REQUESTS_SUBMITTED, this.tags);
+        this.running = registry.counter(namePrefix + METRIC_NAME_NETWORK_REQUESTS_RUNNING, this.tags);
+        this.completed = registry.counter(namePrefix + METRIC_NAME_NETWORK_REQUESTS_COMPLETED, this.tags);
+        this.duration = Timer.builder(namePrefix + METRIC_NAME_NETWORK_REQUESTS_DURATION)
                 // median and 95th percentile
                 .publishPercentiles(0.5, 0.75, 0.95, 0.98, 0.99, 0.999)
-                .publishPercentileHistogram()
                 .sla(Duration.ofMillis(100))
                 .minimumExpectedValue(Duration.ofMillis(1))
                 .maximumExpectedValue(Duration.ofSeconds(10))
@@ -58,19 +67,11 @@ public class InstrumentedInterceptor implements Interceptor {
         submitted.increment();
         // 当前正在运行的请求数 +1
         running.increment();
-        // 获取本次请求对应的度量指标名称
-        String metric = MetricNames.name(OkHttp3Metrics.OKHTTP3_REQUEST_METRIC_NAME_PREFIX, request.url().host());
-        // 获取度量指标
-        List<Tag> jobTags = new ArrayList<>(tags);
-        jobTags.add(Tag.of("method", request.method()));
-        Timer timer = registry.timer(metric, tags);
         Response response;
         try {
-            request = request.newBuilder().addHeader(OkHttp3Metrics.OKHTTP3_REQUEST_METRIC_NAME_PREFIX, metric).build();
             response = chain.proceed(request);
         } finally {
             // 记录本次请求耗时
-            timer.record(System.currentTimeMillis() - start, TimeUnit.MILLISECONDS);
             duration.record(System.currentTimeMillis() - start, TimeUnit.MILLISECONDS);
             // 当前正在运行的请求数 -1
             running.increment(-1);

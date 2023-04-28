@@ -23,25 +23,24 @@ import java.util.ArrayList;
 import java.util.stream.Collectors;
 
 /**
- * OkHttp Client Ini
- * @author Administrator
+ * OkHttp Client Metrics Ini
+ * @author wandl
  */
 @AutoConfigureAfter(MetricsAutoConfiguration.class)
 @Configuration(proxyBeanMethods = false)
 @ConditionalOnClass({ MeterRegistry.class, OkHttpClient.class, OkHttpConnectionPoolMetrics.class , OkHttpObservationInterceptor.class  })
-@ConditionalOnProperty(prefix = OkHttp3MetricsProperties.PREFIX, value = "enabled", havingValue = "true", matchIfMissing = false)
 @ConditionalOnBean(MeterRegistry.class)
 @EnableConfigurationProperties({ OkHttp3MetricsProperties.class })
 public class OkHttp3MetricsAutoConfiguration {
 
 	@Bean
-	public OkHttpDispatcherMetrics okHttp3DispatcherMetrics(ObjectProvider<OkHttpClient> okhttp3ClientProvider) {
-		return new OkHttpDispatcherMetrics(okhttp3ClientProvider.getObject());
+	public OkHttpCacheMetrics okHttp3CacheMetrics(ObjectProvider<OkHttpClient> okhttp3ClientProvider) {
+		return new OkHttpCacheMetrics(okhttp3ClientProvider.getObject(), OkHttp3Metrics.OKHTTP3_POOL_METRIC_NAME_PREFIX);
 	}
 
 	@Bean
-	public OkHttpCacheMetrics okHttp3CacheMetrics(ObjectProvider<OkHttpClient> okhttp3ClientProvider) {
-		return new OkHttpCacheMetrics(okhttp3ClientProvider.getObject());
+	public OkHttpDispatcherMetrics okHttp3DispatcherMetrics(ObjectProvider<OkHttpClient> okhttp3ClientProvider) {
+		return new OkHttpDispatcherMetrics(okhttp3ClientProvider.getObject(), OkHttp3Metrics.OKHTTP3_POOL_METRIC_NAME_PREFIX);
 	}
 
 	@Bean

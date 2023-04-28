@@ -27,26 +27,31 @@ public class OkHttpDispatcherMetrics extends OkHttp3Metrics {
 	/**
 	 * dispatcher
 	 */
-	public static final String METRIC_NAME_DISPATCHER_MAX_REQUESTS 			= OKHTTP3_METRIC_NAME_PREFIX + ".dispatcher.max.requests";
-	public static final String METRIC_NAME_DISPATCHER_MAX_REQUESTS_PERHOST 	= OKHTTP3_METRIC_NAME_PREFIX + ".dispatcher.max.requests.perhost";
-	public static final String METRIC_NAME_DISPATCHER_QUEUED_CALLS_COUNT		= OKHTTP3_METRIC_NAME_PREFIX + ".dispatcher.queued.calls.count";
-	public static final String METRIC_NAME_DISPATCHER_RUNNING_CALLS_COUNT		= OKHTTP3_METRIC_NAME_PREFIX + ".dispatcher.running.calls.count";
+	public static final String METRIC_NAME_DISPATCHER_MAX_REQUESTS 			= ".dispatcher.max.requests";
+	public static final String METRIC_NAME_DISPATCHER_MAX_REQUESTS_PERHOST 	= ".dispatcher.max.requests.perhost";
+	public static final String METRIC_NAME_DISPATCHER_QUEUED_CALLS_COUNT	= ".dispatcher.queued.calls.count";
+	public static final String METRIC_NAME_DISPATCHER_RUNNING_CALLS_COUNT	= ".dispatcher.running.calls.count";
 
 	public OkHttpDispatcherMetrics(OkHttpClient okhttp3Client) {
-		super(okhttp3Client);
+		super(okhttp3Client, OkHttp3Metrics.OKHTTP3_POOL_METRIC_NAME_PREFIX);
 	}
 
-	public OkHttpDispatcherMetrics(OkHttpClient okhttp3Client, Iterable<Tag> tags) {
-		super(okhttp3Client, tags);
+	public OkHttpDispatcherMetrics(OkHttpClient okhttp3Client, String namePrefix) {
+		super(okhttp3Client, namePrefix);
+	}
+
+	public OkHttpDispatcherMetrics(OkHttpClient okhttp3Client, String namePrefix, Iterable<Tag> tags) {
+		super(okhttp3Client, namePrefix, tags);
+
 	}
 
 	@Override
-	public void bindTo(MeterRegistry registry, OkHttpClient okhttp3Client, Iterable<Tag> tags) {
+	public void bindTo(MeterRegistry registry, OkHttpClient okhttp3Client, String namePrefix, Iterable<Tag> tags) {
 		Dispatcher dispatcher = okhttp3Client.dispatcher();
-		bindCounter(registry, METRIC_NAME_DISPATCHER_MAX_REQUESTS, "max requests of dispatcher ", dispatcher, Dispatcher::getMaxRequests);
-		bindCounter(registry, METRIC_NAME_DISPATCHER_MAX_REQUESTS_PERHOST, "max requests of dispatcher by per host ", dispatcher, Dispatcher::getMaxRequestsPerHost);
-		bindGauge(registry, METRIC_NAME_DISPATCHER_QUEUED_CALLS_COUNT, "Total number of queued calls ", dispatcher, Dispatcher::queuedCallsCount);
-		bindGauge(registry, METRIC_NAME_DISPATCHER_RUNNING_CALLS_COUNT, "Total number of running calls ", dispatcher, Dispatcher::runningCallsCount);
+		bindCounter(registry, namePrefix + METRIC_NAME_DISPATCHER_MAX_REQUESTS, "max requests of dispatcher ", dispatcher, Dispatcher::getMaxRequests);
+		bindCounter(registry, namePrefix + METRIC_NAME_DISPATCHER_MAX_REQUESTS_PERHOST, "max requests of dispatcher by per host ", dispatcher, Dispatcher::getMaxRequestsPerHost);
+		bindGauge(registry, namePrefix + METRIC_NAME_DISPATCHER_QUEUED_CALLS_COUNT, "Total number of queued calls ", dispatcher, Dispatcher::queuedCallsCount);
+		bindGauge(registry, namePrefix + METRIC_NAME_DISPATCHER_RUNNING_CALLS_COUNT, "Total number of running calls ", dispatcher, Dispatcher::runningCallsCount);
 	}
 
 }
