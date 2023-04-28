@@ -1,0 +1,46 @@
+
+
+################################################################################################################
+###Spring Boot 监控（安全、开放信息等）配置：
+################################################################################################################
+management:
+  metrics:
+    tags:
+      # 在统计信息中添加自定义的标签
+      application: ${spring.application.name}
+  # 开启shutdown和health端点
+  endpoint:
+    shutdown:
+      enabled: true
+    health:
+      probes:
+        enabled: true
+  endpoints:
+    web:
+      exposure:
+        # 指定上下文路径，启用相应端点
+        base-path: /actuator
+        include: health,shutdown,metrics,prometheus
+
+################################################################################################################
+###okhttp3基本配置：
+################################################################################################################
+okhttp3:
+  # okhttp3 的 metrics 配置
+  metrics:
+    # 是否开启okhttp3的metrics监控
+    enabled: true
+    # 扩展 okhttp3 的 metrics 指标标签
+    extra-tags:
+      # 额外的tag，可以在metrics中查看
+      app: ${spring.application.name}
+    # 是否在监控指标中包含host标签
+    include-host: true
+    # 扩展 okhttp3 request 的 metrics 指标标签
+    request-tag-keys:
+      # 额外的tag，可以在metrics中查看
+      app: ${spring.application.name}
+
+spring:
+  application:
+    name: spring-boot-actuator
