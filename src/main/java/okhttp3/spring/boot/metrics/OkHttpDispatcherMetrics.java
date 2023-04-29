@@ -48,10 +48,10 @@ public class OkHttpDispatcherMetrics extends OkHttp3Metrics {
 	@Override
 	public void bindTo(MeterRegistry registry, OkHttpClient okhttp3Client, String namePrefix, Iterable<Tag> tags) {
 		Dispatcher dispatcher = okhttp3Client.dispatcher();
-		bindCounter(registry, namePrefix + METRIC_NAME_DISPATCHER_MAX_REQUESTS, "max requests of dispatcher ", dispatcher, Dispatcher::getMaxRequests);
-		bindCounter(registry, namePrefix + METRIC_NAME_DISPATCHER_MAX_REQUESTS_PERHOST, "max requests of dispatcher by per host ", dispatcher, Dispatcher::getMaxRequestsPerHost);
-		bindGauge(registry, namePrefix + METRIC_NAME_DISPATCHER_QUEUED_CALLS_COUNT, "Total number of queued calls ", dispatcher, Dispatcher::queuedCallsCount);
-		bindGauge(registry, namePrefix + METRIC_NAME_DISPATCHER_RUNNING_CALLS_COUNT, "Total number of running calls ", dispatcher, Dispatcher::runningCallsCount);
+		bindCounter(registry, namePrefix + METRIC_NAME_DISPATCHER_MAX_REQUESTS, "max requests of dispatcher ", dispatcher, Dispatcher::getMaxRequests, tags);
+		bindCounter(registry, namePrefix + METRIC_NAME_DISPATCHER_MAX_REQUESTS_PERHOST, "max requests of dispatcher by per host ", dispatcher, Dispatcher::getMaxRequestsPerHost, tags);
+		bindGauge(registry, namePrefix + METRIC_NAME_DISPATCHER_QUEUED_CALLS_COUNT, "Total number of queued calls ", dispatcher, Dispatcher::queuedCallsCount, tags);
+		bindGauge(registry, namePrefix + METRIC_NAME_DISPATCHER_RUNNING_CALLS_COUNT, "Total number of running calls ", dispatcher, Dispatcher::runningCallsCount, tags);
 	}
 
 }

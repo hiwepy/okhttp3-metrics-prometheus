@@ -133,7 +133,7 @@ public abstract class OkHttp3Metrics implements MeterBinder, ApplicationListener
 	abstract void bindTo(@NonNull MeterRegistry registry, OkHttpClient okhttp3Client, String namePrefix, Iterable<Tag> tags);
 
 	protected  <T> void bindTimer(MeterRegistry registry, String name, String desc, T metricsHandler,
-								  ToLongFunction<T> countFunc, ToDoubleFunction<T> consumer) {
+								  ToLongFunction<T> countFunc, ToDoubleFunction<T> consumer, Iterable<Tag> tags) {
 		FunctionTimer.builder(name, metricsHandler, countFunc, consumer, TimeUnit.SECONDS)
 				.description(desc)
 				.tags(tags)
@@ -141,7 +141,7 @@ public abstract class OkHttp3Metrics implements MeterBinder, ApplicationListener
 	}
 
 	protected <T> void bindGauge(MeterRegistry registry, String name, String desc, T metricResult,
-								   ToDoubleFunction<T> consumer) {
+								   ToDoubleFunction<T> consumer, Iterable<Tag> tags) {
 		Gauge.builder(name, metricResult, consumer)
 				.description(desc)
 				.tags(tags)
@@ -149,7 +149,7 @@ public abstract class OkHttp3Metrics implements MeterBinder, ApplicationListener
 	}
 
 	protected <T> void bindTimeGauge(MeterRegistry registry, String name, String desc, T metricResult,
-							   ToDoubleFunction<T> consumer) {
+							   ToDoubleFunction<T> consumer, Iterable<Tag> tags) {
 		TimeGauge.builder(name, metricResult, TimeUnit.SECONDS, consumer)
 				.description(desc)
 				.tags(tags)
@@ -157,7 +157,7 @@ public abstract class OkHttp3Metrics implements MeterBinder, ApplicationListener
 	}
 
 	protected <T> void bindCounter(MeterRegistry registry, String name, String desc, T metricsHandler,
-							 ToDoubleFunction<T> consumer) {
+							 ToDoubleFunction<T> consumer, Iterable<Tag> tags) {
 		FunctionCounter.builder(name, metricsHandler, consumer)
 				.description(desc)
 				.tags(tags)

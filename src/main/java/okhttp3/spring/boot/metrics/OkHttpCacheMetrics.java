@@ -52,19 +52,19 @@ public class OkHttpCacheMetrics extends OkHttp3Metrics {
 	@Override
 	public void bindTo(MeterRegistry registry, OkHttpClient okhttp3Client, String namePrefix, Iterable<Tag> tags) {
 		Cache cache = okhttp3Client.cache();
-		bindGauge(registry, namePrefix  + METRIC_NAME_CACHE_REQUEST_COUNT, "Total number of cache request ", cache, Cache::requestCount);
-		bindGauge(registry, namePrefix  + METRIC_NAME_CACHE_HIT_COUNT, "Total number of cache hit ", cache, Cache::hitCount);
-		bindGauge(registry, namePrefix  + METRIC_NAME_CACHE_NETWORK_COUNT, "Total number of cache network ", cache, Cache::networkCount);
-		bindGauge(registry, namePrefix  + METRIC_NAME_CACHE_WRITE_SUCCESS_COUNT, "Total number of cache write success ", cache, Cache::writeSuccessCount);
-		bindGauge(registry, namePrefix  + METRIC_NAME_CACHE_WRITE_ABORT_COUNT, "Total number of cache write abort ", cache, Cache::writeAbortCount);
+		bindGauge(registry, namePrefix  + METRIC_NAME_CACHE_REQUEST_COUNT, "Total number of cache request ", cache, Cache::requestCount, tags);
+		bindGauge(registry, namePrefix  + METRIC_NAME_CACHE_HIT_COUNT, "Total number of cache hit ", cache, Cache::hitCount, tags);
+		bindGauge(registry, namePrefix  + METRIC_NAME_CACHE_NETWORK_COUNT, "Total number of cache network ", cache, Cache::networkCount, tags);
+		bindGauge(registry, namePrefix  + METRIC_NAME_CACHE_WRITE_SUCCESS_COUNT, "Total number of cache write success ", cache, Cache::writeSuccessCount, tags);
+		bindGauge(registry, namePrefix  + METRIC_NAME_CACHE_WRITE_ABORT_COUNT, "Total number of cache write abort ", cache, Cache::writeAbortCount, tags);
 		bindGauge(registry, namePrefix  + METRIC_NAME_CACHE_CURRENT_SIZE, "Total number of current cache size ", cache, (c) -> {
 			try {
 				return c.size();
 			} catch (IOException e) {
 				return 0;
 			}
-		});
-		bindGauge(registry, METRIC_NAME_CACHE_MAX_SIZE, "Total number of cache max size ", cache, Cache::maxSize);
+		}, tags);
+		bindGauge(registry, METRIC_NAME_CACHE_MAX_SIZE, "Total number of cache max size ", cache, Cache::maxSize, tags);
 	}
 
 }
