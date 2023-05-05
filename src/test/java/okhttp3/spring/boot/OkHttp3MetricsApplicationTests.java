@@ -5,8 +5,6 @@ import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
-import okhttp3.spring.boot.metrics.InstrumentedOkHttpClients;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -19,11 +17,6 @@ import org.springframework.context.annotation.Lazy;
  */
 @SpringBootApplication
 public class OkHttp3MetricsApplicationTests implements CommandLineRunner {
-
-    @Bean
-    public OkHttpClient okHttpClient(ObjectProvider<MeterRegistry> meterRegistryProvider){
-        return InstrumentedOkHttpClients.create(meterRegistryProvider.getObject(), new OkHttpClient.Builder().build());
-    };
 
     @Bean
     public MeterRegistry registry() {
