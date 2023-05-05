@@ -5,6 +5,7 @@ import io.micrometer.core.instrument.Tag;
 import io.micrometer.core.instrument.binder.okhttp3.OkHttpConnectionPoolMetrics;
 import io.micrometer.core.instrument.binder.okhttp3.OkHttpObservationInterceptor;
 import okhttp3.OkHttpClient;
+import okhttp3.spring.boot.metrics.InstrumentedOkHttpClients;
 import okhttp3.spring.boot.metrics.OkHttp3Metrics;
 import okhttp3.spring.boot.metrics.OkHttpCacheMetrics;
 import okhttp3.spring.boot.metrics.OkHttpDispatcherMetrics;
@@ -13,6 +14,7 @@ import org.springframework.boot.actuate.autoconfigure.metrics.MetricsAutoConfigu
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -32,6 +34,19 @@ import java.util.stream.Collectors;
 @ConditionalOnBean(MeterRegistry.class)
 @EnableConfigurationProperties({ OkHttp3MetricsProperties.class })
 public class OkHttp3MetricsAutoConfiguration {
+
+	@Bean
+	@ConditionalOnMissingBean
+	public okhttp3.OkHttpClient.Builder okhttp3Builder(){
+		return new okhttp3.OkHttpClient.Builder();
+	}
+
+	@Bean
+	public OkHttpClient okhttp3Client(ObjectProvider<okhttp3.OkHttpClient.Builder> okhttp3BuilderProvider,
+									  ObjectProvider<MeterRegistry> meterRegistryProvider){
+		OkHttpClient okhttp3Client = okhttp3BuilderProvider.getObject().build();
+		return InstrumentedOkHttpClients.create(meterRegistryProvider.getObject(), okhttp3Client);
+	}
 
 	@Bean
 	public OkHttpCacheMetrics okHttp3CacheMetrics(ObjectProvider<OkHttpClient> okhttp3ClientProvider) {
