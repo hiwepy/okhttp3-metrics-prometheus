@@ -13,7 +13,7 @@ import java.util.function.BiFunction;
 
 /**
  * Static factory methods for instrumenting an {@link OkHttpClient}.
- * @author [@Loong Wan](https://github.com/loong10k)
+ * @author <a href="https://github.com/loong10k">Loong Wan</a>
  **/
 public final class InstrumentedOkHttpClients {
 
