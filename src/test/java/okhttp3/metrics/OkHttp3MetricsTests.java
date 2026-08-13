@@ -22,6 +22,9 @@ import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
 import java.nio.file.Path;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -41,7 +44,7 @@ class OkHttp3MetricsTests {
     @Test
     void shouldRecordInterceptorSuccessBypassAndFailure() throws Exception {
         SimpleMeterRegistry registry = new SimpleMeterRegistry();
-        InstrumentedInterceptor interceptor = new InstrumentedInterceptor(registry, "client", List.of(Tag.of("app", "test")));
+        InstrumentedInterceptor interceptor = new InstrumentedInterceptor(registry, "client", Collections.singletonList(Tag.of("app", "test")));
         Request request = new Request.Builder().url("http://localhost/test").build();
         Response response = response(request);
         Interceptor.Chain chain = mock(Interceptor.Chain.class);
@@ -80,7 +83,7 @@ class OkHttp3MetricsTests {
 
         listener.callStart(call);
         listener.dnsStart(call, "localhost");
-        listener.dnsEnd(call, "localhost", List.of(InetAddress.getLoopbackAddress()));
+        listener.dnsEnd(call, "localhost", Collections.singletonList(InetAddress.getLoopbackAddress()));
         listener.connectStart(call, address, Proxy.NO_PROXY);
         listener.secureConnectStart(call);
         listener.secureConnectEnd(call, null);
@@ -113,15 +116,17 @@ class OkHttp3MetricsTests {
         SimpleMeterRegistry registry = new SimpleMeterRegistry();
         OkHttpClient raw = new OkHttpClient();
         List<java.util.function.BiFunction<Request, Response, KeyValue>> tags =
-                List.of((request, response) -> KeyValue.of("status", String.valueOf(response.code())));
+                Collections.singletonList((request, response) -> KeyValue.of("status", String.valueOf(response.code())));
 
         OkHttpClient first = InstrumentedOkHttpClients.create(registry);
         OkHttpClient second = InstrumentedOkHttpClients.create(registry, raw);
         OkHttpClient third = InstrumentedOkHttpClients.create(registry, raw, true);
         OkHttpClient fourth = InstrumentedOkHttpClients.create(registry, raw, UrlMapperEnum.FULL_URL, true);
         OkHttpClient fifth = InstrumentedOkHttpClients.create(registry, raw, tags, UrlMapperEnum.ENCODED_PATH, false);
+        Map<String, String> appTag = new HashMap<>();
+        appTag.put("app", "test");
         OkHttpClient configured = InstrumentedOkHttpClients.create(registry, raw,
-                Map.of("app", "test"), List.of("tenant"), tags, UrlMapperEnum.TOP_PRIVATE_DOMAIN, true);
+                appTag, Collections.singletonList("tenant"), tags, UrlMapperEnum.TOP_PRIVATE_DOMAIN, true);
 
         assertEquals(2, configured.networkInterceptors().size());
         assertNotNull(configured.eventListenerFactory());
@@ -134,7 +139,7 @@ class OkHttp3MetricsTests {
         assertTrue(UrlMapperEnum.ENCODED_PATH.equals(UrlMapperEnum.ENCODED_PATH));
         assertEquals("Encoded Path ", UrlMapperEnum.ENCODED_PATH.getName());
 
-        List.of(first, second, third, fourth, fifth, configured, raw).forEach(this::shutdown);
+        Arrays.asList(first, second, third, fourth, fifth, configured, raw).forEach(this::shutdown);
     }
 
     @Test
@@ -145,10 +150,10 @@ class OkHttp3MetricsTests {
 
         new OkHttpDispatcherMetrics(client).bindTo(registry);
         new OkHttpDispatcherMetrics(client, "custom").bindTo(registry);
-        new OkHttpDispatcherMetrics(client, "tagged", List.of(Tag.of("app", "test"))).bindTo(registry);
+        new OkHttpDispatcherMetrics(client, "tagged", Collections.singletonList(Tag.of("app", "test"))).bindTo(registry);
         new OkHttpCacheMetrics(client).bindTo(registry);
         new OkHttpCacheMetrics(client, "cache").bindTo(registry);
-        new OkHttpCacheMetrics(client, "tagged.cache", List.of(Tag.of("app", "test"))).bindTo(registry);
+        new OkHttpCacheMetrics(client, "tagged.cache", Collections.singletonList(Tag.of("app", "test"))).bindTo(registry);
 
         assertNotNull(registry.find(OkHttp3Metrics.OKHTTP3_POOL_METRIC_NAME_PREFIX
                 + OkHttpDispatcherMetrics.METRIC_NAME_DISPATCHER_MAX_REQUESTS).meter());
@@ -164,7 +169,7 @@ class OkHttp3MetricsTests {
     @Test
     void shouldConstructNestedListenerAndTagHandler() {
         EventListener listener = new EventListener() { };
-        assertNotNull(new NestedEventListener(List.of(listener)));
+        assertNotNull(new NestedEventListener(Collections.singletonList(listener)));
         OKhttp3MetricsSpecificTagHandler handler = () -> (request, response) -> KeyValue.of("code", "200");
         assertEquals("200", handler.getHandler().apply(
                 new Request.Builder().url("http://localhost").build(),
