@@ -7,7 +7,7 @@ import okhttp3.Response;
 import java.util.function.BiFunction;
 
 /**
- * @author [@Loong Wan](https://github.com/loong10k)
+ * @author <a href="https://github.com/loong10k">Loong Wan</a>
  */
 public interface OKhttp3MetricsSpecificTagHandler {
 

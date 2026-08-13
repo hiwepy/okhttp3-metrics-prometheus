@@ -7,9 +7,9 @@
 纯 Java OkHttp 指标模块：面向 Micrometer / Prometheus 的调用、调度器与缓存埋点
 
 > **当前分支**：`feature/3.0.x`
-> **版本**：`3.0.x.x.20260630-SNAPSHOT`
-> **JDK 基线**：8
-> **项目状态**：维护中（1.0.x 线）。尚未发布 Maven Central；制品通过 Aliyun Maven 仓库与 GitHub Releases 分发。
+> **版本**：`3.0.x.20260630-SNAPSHOT`
+> **JDK 基线**：21
+> **项目状态**：维护中（3.0.x 线）。尚未发布 Maven Central；制品通过 Aliyun Maven 仓库与 GitHub Releases 分发。
 
 ## 目录
 
@@ -70,18 +70,18 @@
 
 | 组件 | 版本 | 说明 |
 |---|---:|---|
-| JDK | 21+ | 1.0.x 线基线 |
-| OkHttp | 4.12.0 | 埋点目标 |
-| Micrometer core + observation | 1.10.6 | 指标原语 |
+| JDK | 21+ | 3.0.x 线基线 |
+| OkHttp | 5.4.0 | 埋点目标 |
+| Micrometer core + observation | 1.15.4 | 指标原语 |
 | SLF4J | 2.0.18 | 日志门面 |
 
 版本线矩阵：
 
 | 版本线 | 分支 | JDK | 版本模式 | 用途 |
 |---|---|---:|---|---|
-| 1.0.x | `feature/3.0.x`（当前分支） | 8 | `1.0.x.*` | 供 Boot 2.x Starter 与存量项目使用 |
+| 1.0.x | `feature/1.0.x` | 8 | `1.0.x.*` | 供 Boot 2.x Starter 与存量项目使用 |
 | 2.0.x | `feature/2.0.x` | 17 | `2.0.x.*` | 供 Boot 3.x Starter 使用 |
-| 3.0.x | `feature/3.0.x` | 21 | `3.0.x.*` | 供 Boot 4.x Starter / 新项目使用 |
+| 3.0.x | `feature/3.0.x`（当前分支） | 21 | `3.0.x.*` | 供 Boot 4.x Starter / 新项目使用 |
 
 <a id="4-architecture--modules"></a>
 ## 4. 架构与模块
@@ -126,14 +126,14 @@ Maven：
 <dependency>
     <groupId>io.github.easy4j</groupId>
     <artifactId>okhttp3-metrics-prometheus</artifactId>
-    <version>3.0.x.x.20260630-SNAPSHOT</version>
+    <version>3.0.x.20260630-SNAPSHOT</version>
 </dependency>
 ```
 
 Gradle：
 
 ```groovy
-implementation 'io.github.easy4j:okhttp3-metrics-prometheus:3.0.x.x.20260630-SNAPSHOT'
+implementation 'io.github.easy4j:okhttp3-metrics-prometheus:3.0.x.20260630-SNAPSHOT'
 ```
 
 快照版本需要启用对应快照仓库（`pom.xml` 中 `distributionManagement` 指向 Aliyun Maven 仓库）。
@@ -200,7 +200,7 @@ OkHttpClient client = InstrumentedOkHttpClients.create(
 mvn clean verify
 ```
 
-- 父 POM 通过 `maven-enforcer-plugin` 强制 Maven 与 JDK 8 基线。
+- 父 POM 通过 `maven-enforcer-plugin` 强制 Maven 与 JDK 21 基线。
 - JaCoCo 在 `verify` 阶段执行 `prepare-agent`、`report` 与 `check`，行覆盖率规则为 **90%**（`haltOnFailure=false`）。
 - 发布打包（`mvn -Prelease deploy`）附带 sources 与 javadoc 构件并执行 GPG 签名，对接 Sonatype Central Publishing；普通 `mvn deploy` 按版本后缀路由到 Aliyun Maven 仓库（见 `distributionManagement`）。
 - `scripts/render-branch-pom.py` 按版本线重新生成分支专属 `pom.xml`（JDK 与依赖栈随线变化）。
@@ -210,9 +210,9 @@ mvn clean verify
 
 | 分支 | 版本模式 | JDK | 维护策略 |
 |---|---|---|---|
-| `feature/1.0.x`（当前分支） | `1.0.x.*` | 8 | 仅接受兼容性修复与 JDK 8 安全的依赖升级 |
+| `feature/1.0.x` | `1.0.x.*` | 8 | 仅接受兼容性修复与 JDK 8 安全的依赖升级 |
 | `feature/2.0.x` | `2.0.x.*` | 17 | JDK 17 线 |
-| `feature/3.0.x` | `3.0.x.*` | 21 | JDK 21 线 |
+| `feature/3.0.x`（当前分支） | `3.0.x.*` | 21 | JDK 21 线 |
 
 <a id="11-contributing--license"></a>
 ## 11. 贡献与许可证

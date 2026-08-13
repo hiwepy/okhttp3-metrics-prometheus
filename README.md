@@ -8,9 +8,9 @@ Pure Java OkHttp metrics module: Micrometer / Prometheus instrumentation for OkH
 [简体中文](./README.zh-CN.md)
 
 > **Current branch**: `feature/3.0.x`
-> **Version**: `3.0.x.x.20260630-SNAPSHOT`
-> **JDK baseline**: 8
-> **Project status**: maintenance (1.0.x line). Not yet published to Maven Central; artifacts are distributed via the Aliyun Maven repository and GitHub Releases.
+> **Version**: `3.0.x.20260630-SNAPSHOT`
+> **JDK baseline**: 21
+> **Project status**: maintenance (3.0.x line). Not yet published to Maven Central; artifacts are distributed via the Aliyun Maven repository and GitHub Releases.
 
 ## Table of Contents
 
@@ -71,18 +71,18 @@ Metric name prefixes are declared in `OkHttp3Metrics` (`okhttp3`, `okhttp3.reque
 
 | Component | Version | Notes |
 |---|---:|---|
-| JDK | 21+ | 1.0.x line baseline |
-| OkHttp | 4.12.0 | Instrumented target |
-| Micrometer core + observation | 1.10.6 | Meter primitives |
+| JDK | 21+ | 3.0.x line baseline |
+| OkHttp | 5.4.0 | Instrumented target |
+| Micrometer core + observation | 1.15.4 | Meter primitives |
 | SLF4J | 2.0.18 | Logging facade |
 
 Version-line matrix:
 
 | Version line | Branch | JDK | Version pattern | Purpose |
 |---|---|---:|---|---|
-| 1.0.x | `feature/3.0.x` (this branch) | 8 | `1.0.x.*` | For Boot 2.x starters and legacy projects |
+| 1.0.x | `feature/1.0.x` | 8 | `1.0.x.*` | For Boot 2.x starters and legacy projects |
 | 2.0.x | `feature/2.0.x` | 17 | `2.0.x.*` | For Boot 3.x starters |
-| 3.0.x | `feature/3.0.x` | 21 | `3.0.x.*` | For Boot 4.x starters / new projects |
+| 3.0.x | `feature/3.0.x` (this branch) | 21 | `3.0.x.*` | For Boot 4.x starters / new projects |
 
 <a id="4-architecture--modules"></a>
 ## 4. Architecture & Modules
@@ -127,14 +127,14 @@ Maven:
 <dependency>
     <groupId>io.github.easy4j</groupId>
     <artifactId>okhttp3-metrics-prometheus</artifactId>
-    <version>3.0.x.x.20260630-SNAPSHOT</version>
+    <version>3.0.x.20260630-SNAPSHOT</version>
 </dependency>
 ```
 
 Gradle:
 
 ```groovy
-implementation 'io.github.easy4j:okhttp3-metrics-prometheus:3.0.x.x.20260630-SNAPSHOT'
+implementation 'io.github.easy4j:okhttp3-metrics-prometheus:3.0.x.20260630-SNAPSHOT'
 ```
 
 Snapshot builds require an enabled snapshot repository (Aliyun Maven snapshot repository per `distributionManagement` in `pom.xml`).
@@ -201,7 +201,7 @@ OkHttpClient client = InstrumentedOkHttpClients.create(
 mvn clean verify
 ```
 
-- The parent POM enforces Maven and JDK 8 baselines via `maven-enforcer-plugin`.
+- The parent POM enforces Maven and JDK 21 baselines via `maven-enforcer-plugin`.
 - JaCoCo runs `prepare-agent`, `report` and `check` on the `verify` phase with a **90% line-coverage** rule (`haltOnFailure=false`).
 - Release packaging (`mvn -Prelease deploy`) attaches sources and javadoc jars, GPG-signs artifacts and is wired for Sonatype Central Publishing; plain `mvn deploy` routes SNAPSHOT/release artifacts to the Aliyun Maven repository per `distributionManagement`.
 - `scripts/render-branch-pom.py` regenerates the branch-specific `pom.xml` (JDK / dependency stack per version line).
@@ -211,9 +211,9 @@ mvn clean verify
 
 | Branch | Version pattern | JDK | Maintenance policy |
 |---|---|---|---|
-| `feature/1.0.x` (this branch) | `1.0.x.*` | 8 | Compatibility fixes and JDK-8-safe dependency upgrades only |
+| `feature/1.0.x` | `1.0.x.*` | 8 | Compatibility fixes and JDK-8-safe dependency upgrades only |
 | `feature/2.0.x` | `2.0.x.*` | 17 | JDK 17 line |
-| `feature/3.0.x` | `3.0.x.*` | 21 | JDK 21 line |
+| `feature/3.0.x` (this branch) | `3.0.x.*` | 21 | JDK 21 line |
 
 <a id="11-contributing--license"></a>
 ## 11. Contributing & License
