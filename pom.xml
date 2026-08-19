@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
+<project xmlns="http://maven.apache.org/POM/4.1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.1.0.xsd">
+    <modelVersion>4.1.0</modelVersion>
     <groupId>io.github.easy4j</groupId>
     <artifactId>okhttp3-metrics-prometheus</artifactId>
     <name>${project.groupId}:${project.artifactId}</name>
@@ -42,7 +42,7 @@
         <!-- ═══ 第一段: 基础属性（自然排序）═══ -->
         <java.version>17</java.version>
         <maven.compiler.release>${java.version}</maven.compiler.release>
-        <maven.version>3.9.16</maven.version>
+        <maven.version>4.0.0-rc-5</maven.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
 
@@ -233,7 +233,7 @@
                                         <message>
                                                                                         You are running an older version of Maven. This application requires at least Maven ${maven.version}.
                                                                                 </message>
-                                        <version>[${maven.version}.0,)</version>
+                                        <version>[4.0.0,)</version>
                                     </requireMavenVersion>
                                     <requireJavaVersion>
                                         <message>
