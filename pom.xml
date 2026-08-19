@@ -5,9 +5,9 @@
     <artifactId>okhttp3-metrics-prometheus</artifactId>
     <name>${project.groupId}:${project.artifactId}</name>
     <url>https://github.com/easy-4-java/${project.artifactId}</url>
-    <version>1.0.x.20260630-SNAPSHOT</version>
+    <version>2.0.x.20260630-SNAPSHOT</version>
     <packaging>jar</packaging>
-    <description>OkHttp3 Metrics for Prometheus - independent of Spring Boot, JDK 1.8 line</description>
+    <description>OkHttp3 Metrics for Prometheus - independent of Spring Boot</description>
 
     <!-- 开源协议采用 Apache 2.0 协议 -->
     <licenses>
@@ -40,7 +40,7 @@
 
     <properties>
         <!-- ═══ 第一段: 基础属性（自然排序）═══ -->
-        <java.version>1.8</java.version>
+        <java.version>17</java.version>
         <maven.compiler.release>${java.version}</maven.compiler.release>
         <maven.version>3.9.16</maven.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -49,10 +49,10 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <!-- Dependency versions -->
         <commons-lang.version>2.6</commons-lang.version>
-        <junit-jupiter.version>5.11.4</junit-jupiter.version>
+        <junit-jupiter.version>6.1.0</junit-jupiter.version>
         <junit.version>4.13.2</junit.version>
         <lombok.version>1.18.46</lombok.version>
-        <micrometer.version>1.10.6</micrometer.version>
+        <micrometer.version>1.14.5</micrometer.version>
         <okhttp.version>4.12.0</okhttp.version>
         <slf4j.version>2.0.18</slf4j.version>
         <!-- Maven Plugin versions -->
@@ -156,7 +156,7 @@
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
-            <version>4.11.0</version>
+            <version>5.21.0</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -191,6 +191,7 @@
                     <artifactId>maven-compiler-plugin</artifactId>
                     <version>${maven-compiler-plugin.version}</version>
                     <configuration>
+                        <release>${java.version}</release>
                         <!-- 字符集编码 -->
                         <encoding>${project.build.sourceEncoding}</encoding>
                         <!-- 编译最大内存 -->
@@ -365,7 +366,7 @@
                         <charset>${project.build.sourceEncoding}</charset>
                         <encoding>${project.build.sourceEncoding}</encoding>
                         <docencoding>${project.build.sourceEncoding}</docencoding>
-                        <javadocExecutable>${java.home}/../bin/javadoc</javadocExecutable>
+                        <javadocExecutable>${java.home}/bin/javadoc</javadocExecutable>
                         <failOnError>false</failOnError>
                     </configuration>
                     <executions>
