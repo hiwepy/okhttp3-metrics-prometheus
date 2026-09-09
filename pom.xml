@@ -451,7 +451,6 @@
                 <jdk>[9,)</jdk>
             </activation>
             <properties>
-                <additionalparam>-Xdoclint:none -Xlint:unchecked</additionalparam>
             </properties>
         </profile>
         
